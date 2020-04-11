@@ -2,3 +2,4 @@ venv
 .idea
 local_definitions.py
 *~
+__pycache__
