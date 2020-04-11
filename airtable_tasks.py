@@ -1,3 +1,5 @@
+import json
+from os import environ
 from datetime import date
 
 from airtable import airtable
@@ -128,7 +130,7 @@ def record_to_obj(record: dict, classtype: type):
     return obj
 
 
-class TodoBase:
+class TaskBase:
     def __init__(self, base_id: str):
         self.id = base_id
         self.name = 'Daily Todo'
@@ -183,15 +185,25 @@ class TodoBase:
         return tasks
 
     def create_tasks(self, tasks: [Task]):
-         return airtable.create_records(self.id, Task.table_name, [t.to_dict() for t in tasks])
+        return airtable.create_records(self.id, Task.table_name, [t.to_dict() for t in tasks])
 
 
-if __name__ == '__main__':
-    from local_definitions import TODO_BASE_ID as BASE_ID
-
-    base = TodoBase(BASE_ID)
+def create_tasks_for_today():
+    base = TaskBase(environ['TASK_BASE_ID'])
     new_tasks = base.generate_tasks(date.today())
+    output_message = ''
     for t in new_tasks:
-        print("New task: %s" % t.type.name)
+        msg = "New task: %s" % t.type.name
+        output_message += msg
+        print(msg)
     response = base.create_tasks(new_tasks)
-    print(response)
+    if response.ok:
+        return {
+            'statusCode': 200,
+            'body': json.dumps(output_message)
+        }
+    else:
+        return {
+            'statusCode': 500,
+            'body': response.json()
+        }

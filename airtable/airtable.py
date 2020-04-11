@@ -25,4 +25,4 @@ def create_records(base_id: str, table_name: str, records: [dict], secret_key=No
     url = _api_url(base_id, table_name)
     records = [{"fields": r} for r in records]
     resp = requests.post(url, headers=_auth_header(secret_key), json={"records": records})
-    return resp.json()
+    return resp
