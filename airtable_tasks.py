@@ -2,7 +2,7 @@ import json
 from os import environ
 from datetime import date
 
-from airtable import airtable
+import airtable
 
 
 class Record:
@@ -207,3 +207,7 @@ def create_tasks_for_today():
             'statusCode': 500,
             'body': response.json()
         }
+
+
+def lambda_handler(event, context):
+    return create_tasks_for_today()
